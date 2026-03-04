@@ -25,15 +25,13 @@ services:
     volumes:
       - wp_data:/var/www/html
 
-  pma:
+pma:
     image: phpmyadmin:latest
     restart: always
     depends_on:
       - db
     environment:
       PMA_HOST: db
-      PMA_USER: ${DB_USER}
-      PMA_PASSWORD: ${DB_PASSWORD}
       PMA_ABSOLUTE_URI: /pma/
 
   proxy:
