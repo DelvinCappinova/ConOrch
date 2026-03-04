@@ -25,9 +25,10 @@ services:
 
 pma:
     image: phpmyadmin:latest
+    ports:
+      - "8080:80"  
     environment:
       - PMA_HOST=db
-      - PMA_ABSOLUTE_URI=http://107.21.67.134/pma/
 
   nginx:
     depends_on:
