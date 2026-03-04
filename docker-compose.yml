@@ -1,45 +1,58 @@
-version: '3.8'
-
 services:
-  db:
-    image: mariadb:10.6
-    restart: always
-    environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+  nginx:
+    image: nginx:latest
+    container_name: proxy
+    ports:
+      - "80:80"
     volumes:
-      - db_data:/var/lib/mysql
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - cloud-network
 
-  wp:
-    depends_on:
-      - db
+  wordpress:
     image: wordpress:latest
-    restart: always
+    container_name: wp
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
-
-pma:
-    image: phpmyadmin:latest
-    ports:
-      - "8080:80"  
-    environment:
-      - PMA_HOST=db
-
-  nginx:
-    depends_on:
-      - wp
-      - pma
-    image: nginx:alpine
-    restart: always
-    ports:
-      - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - wp_data:/var/www/html
+    networks:
+      - cloud-network
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - cloud-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    environment:
+      PMA_HOST: db
+      PMA_ABSOLUTE_URI: /pma/
+    networks:
+      - cloud-network
+    depends_on:
+      - db
+
+# Definisi network yang digunakan bersama
+networks:
+  cloud-network:
+    driver: bridge
 
 volumes:
   db_data:
+  wp_data:
