@@ -23,11 +23,8 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
 
-  pma:
-    depends_on:
-      - db
+pma:
     image: phpmyadmin:latest
-    restart: always
     environment:
       - PMA_HOST=db
       - PMA_ABSOLUTE_URI=http://107.21.67.134/pma/
