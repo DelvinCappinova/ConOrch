@@ -29,8 +29,8 @@ services:
     image: phpmyadmin:latest
     restart: always
     environment:
-      PMA_HOST: db
-      PMA_ABSOLUTE_URI: http://localhost/pma/
+      - PMA_HOST=db
+      - PMA_ABSOLUTE_URI=http://107.21.67.134/pma/
 
   nginx:
     depends_on:
