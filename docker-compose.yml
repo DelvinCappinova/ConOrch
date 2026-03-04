@@ -30,6 +30,7 @@ services:
     restart: always
     environment:
       PMA_HOST: db
+      PMA_ABSOLUTE_URI: http://localhost/pma/
 
   nginx:
     depends_on:
